@@ -10,6 +10,7 @@
 - 用 OpenAI Chat Completions API 批量翻译成简体或繁体中文。
 - 也可以切换到本机 LibreTranslate 免费翻译服务。
 - Chrome 138+ 桌面版还可以尝试 Chrome 内置 Translator API，本地翻译、不需要 API key。
+- Google Cloud Translation 也可用，速度快，NMT 文本翻译每月前 500,000 字符免费。
 - 把翻译结果缓存到浏览器本地存储。
 - 根据 `<video>` 的 `currentTime` 实时显示中文字幕浮层。
 
@@ -42,6 +43,19 @@ docker run -it -p 5000:5000 libretranslate/libretranslate
 注意：本地免费翻译不花 OpenAI API 钱，但英译中自然度通常比 GPT 差，繁体中文也取决于 LibreTranslate 模型支持情况。
 
 LibreTranslate 第一次运行或第一次英译中时可能会下载/加载模型；Docker CPU 翻译整集字幕也会比 GPT 慢很多。扩展会尽量批量请求本地服务并缓存结果，第二次打开同一集会快很多。
+
+## Google Cloud Translation
+
+设置页里的「翻译服务」可以选择 `Google Cloud Translation`。你需要：
+
+1. 在 Google Cloud 创建项目。
+2. 启用 `Cloud Translation API`。
+3. 创建 API key。
+4. 给 API key 添加 API restriction，只允许调用 `Cloud Translation API`。
+5. 建议设置预算提醒或预算上限。
+6. 把 API key 填到扩展设置页保存，然后刷新 Netflix 播放页。
+
+Google Cloud Translation NMT 文本翻译每月前 500,000 字符免费；超过免费额度后会收费。字幕翻译会按发送到 API 的字符数计费，包含空格。扩展有本地缓存，同一集再次播放通常不会再次消耗字符。
 
 ## 观影体验建议
 

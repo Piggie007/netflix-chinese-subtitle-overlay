@@ -2,6 +2,8 @@ const DEFAULTS = {
   translationProvider: "openai",
   apiKey: "",
   endpoint: "https://api.openai.com/v1/chat/completions",
+  googleApiKey: "",
+  googleEndpoint: "https://translation.googleapis.com/language/translate/v2",
   libreEndpoint: "http://localhost:5000/translate",
   model: "gpt-4.1-mini",
   targetChinese: "simplified",
@@ -99,6 +101,10 @@ async function handleSubtitleUrl(rawUrl) {
 
     if (state.settings.translationProvider === "openai" && !state.settings.apiKey) {
       showStatus("请先在扩展设置里填写 OpenAI API Key", { sticky: true });
+      return;
+    }
+    if (state.settings.translationProvider === "google" && !state.settings.googleApiKey) {
+      showStatus("请先在扩展设置里填写 Google Cloud API Key", { sticky: true });
       return;
     }
 

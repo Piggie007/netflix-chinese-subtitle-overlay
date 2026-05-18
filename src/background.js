@@ -2,6 +2,8 @@ chrome.runtime.onInstalled.addListener(async () => {
   const existing = await chrome.storage.sync.get({
     translationProvider: "openai",
     endpoint: "https://api.openai.com/v1/chat/completions",
+    googleApiKey: "",
+    googleEndpoint: "https://translation.googleapis.com/language/translate/v2",
     libreEndpoint: "http://localhost:5000/translate",
     model: "gpt-4.1-mini",
     targetChinese: "simplified",
@@ -39,6 +41,8 @@ async function translateChunk(cues) {
     translationProvider: "openai",
     apiKey: "",
     endpoint: "https://api.openai.com/v1/chat/completions",
+    googleApiKey: "",
+    googleEndpoint: "https://translation.googleapis.com/language/translate/v2",
     libreEndpoint: "http://localhost:5000/translate",
     model: "gpt-4.1-mini",
     targetChinese: "simplified"
@@ -46,6 +50,10 @@ async function translateChunk(cues) {
 
   if (settings.translationProvider === "libretranslate") {
     return translateWithLibreTranslate(cues, settings);
+  }
+
+  if (settings.translationProvider === "google") {
+    return translateWithGoogleCloud(cues, settings);
   }
 
   return translateWithOpenAi(cues, settings);
@@ -98,6 +106,42 @@ async function translateWithLibreTranslate(cues, settings) {
 
   const translations = await translateLibreLineByLine(cues, endpoint, target);
   return { ok: true, content: JSON.stringify(translations) };
+}
+
+async function translateWithGoogleCloud(cues, settings) {
+  if (!settings.googleApiKey) return { ok: false, error: "Missing Google Cloud API Key" };
+
+  const endpoint = settings.googleEndpoint || "https://translation.googleapis.com/language/translate/v2";
+  const target = settings.targetChinese === "traditional" ? "zh-TW" : "zh-CN";
+  const url = `${endpoint}?key=${encodeURIComponent(settings.googleApiKey)}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      q: cues.map((cue) => cue.text),
+      source: "en",
+      target,
+      format: "text"
+    })
+  });
+
+  const text = await response.text();
+  if (!response.ok) return { ok: false, error: `${response.status} ${text.slice(0, 160)}` };
+
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (_) {
+    return { ok: false, error: `Google returned non-JSON: ${text.slice(0, 120)}` };
+  }
+
+  const translations = json.data?.translations || [];
+  return {
+    ok: true,
+    content: JSON.stringify(translations.map((item) => decodeHtmlEntities(item.translatedText || "")))
+  };
 }
 
 async function translateLibreBatch(cues, endpoint, target) {
@@ -168,6 +212,18 @@ async function translateLibreLineByLine(cues, endpoint, target) {
 
 function cleanTranslation(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function decodeHtmlEntities(value) {
+  return cleanTranslation(
+    String(value || "")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+  );
 }
 
 async function mapLimit(items, limit, worker) {

@@ -2,13 +2,25 @@ const defaults = {
   translationProvider: "openai",
   apiKey: "",
   endpoint: "https://api.openai.com/v1/chat/completions",
+  googleApiKey: "",
+  googleEndpoint: "https://translation.googleapis.com/language/translate/v2",
   libreEndpoint: "http://localhost:5000/translate",
   model: "gpt-4.1-mini",
   targetChinese: "simplified",
   showOriginal: true
 };
 
-const ids = ["translationProvider", "apiKey", "endpoint", "libreEndpoint", "model", "targetChinese", "showOriginal"];
+const ids = [
+  "translationProvider",
+  "apiKey",
+  "endpoint",
+  "googleApiKey",
+  "googleEndpoint",
+  "libreEndpoint",
+  "model",
+  "targetChinese",
+  "showOriginal"
+];
 
 async function load() {
   const settings = await chrome.storage.sync.get(defaults);
@@ -51,6 +63,7 @@ load();
 function updateProviderFields() {
   const provider = document.getElementById("translationProvider").value;
   document.getElementById("openaiSettings").hidden = provider !== "openai";
+  document.getElementById("googleSettings").hidden = provider !== "google";
   document.getElementById("libreSettings").hidden = provider !== "libretranslate";
   document.getElementById("chromeTranslatorHint").hidden = provider !== "chromeTranslator";
 }

@@ -13,6 +13,7 @@
         翻译服务
         <select id="translationProvider">
           <option value="openai">OpenAI GPT</option>
+          <option value="google">Google Cloud Translation</option>
           <option value="chromeTranslator">Chrome 内置翻译免费</option>
           <option value="libretranslate">LibreTranslate 本地免费</option>
         </select>
@@ -31,6 +32,17 @@
           Model
           <input id="model" type="text" />
         </label>
+      </section>
+      <section id="googleSettings">
+        <label>
+          Google Cloud API Key
+          <input id="googleApiKey" type="password" autocomplete="off" placeholder="AIza..." />
+        </label>
+        <label>
+          Google endpoint
+          <input id="googleEndpoint" type="url" />
+        </label>
+        <p class="hint">请在 Google Cloud 启用 Cloud Translation API，并给 API key 做 API restriction。</p>
       </section>
       <section id="libreSettings">
         <label>
