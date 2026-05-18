@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+*.log
+dist/
+build/
+node_modules/
+.cache/
+.tmp/
+*.pem
+*.key
+secrets.*

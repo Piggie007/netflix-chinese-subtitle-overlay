@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Netflix Chinese Subtitles</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Netflix 中文字幕</h1>
+      <label>
+        翻译服务
+        <select id="translationProvider">
+          <option value="openai">OpenAI GPT</option>
+          <option value="chromeTranslator">Chrome 内置翻译免费</option>
+          <option value="libretranslate">LibreTranslate 本地免费</option>
+        </select>
+      </label>
+      <p id="chromeTranslatorHint" class="hint">Chrome 138+ 桌面版可用。首次使用会下载语言包，之后本地翻译，不需要 API key。</p>
+      <section id="openaiSettings">
+        <label>
+        OpenAI API Key
+          <input id="apiKey" type="password" autocomplete="off" placeholder="sk-..." />
+        </label>
+        <label>
+          API endpoint
+          <input id="endpoint" type="url" />
+        </label>
+        <label>
+          Model
+          <input id="model" type="text" />
+        </label>
+      </section>
+      <section id="libreSettings">
+        <label>
+          LibreTranslate endpoint
+          <input id="libreEndpoint" type="url" />
+        </label>
+        <p class="hint">本机免费服务默认地址通常是 http://localhost:5000/translate</p>
+      </section>
+      <label>
+        中文
+        <select id="targetChinese">
+          <option value="simplified">简体中文</option>
+          <option value="traditional">繁體中文</option>
+        </select>
+      </label>
+      <label class="check">
+        <input id="showOriginal" type="checkbox" />
+        显示英文原字幕
+      </label>
+      <div class="actions">
+        <button id="save">保存</button>
+        <button id="clearCache" type="button">清空本地字幕缓存</button>
+      </div>
+      <p id="status" role="status"></p>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
